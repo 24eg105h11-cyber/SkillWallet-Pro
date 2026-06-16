@@ -108,9 +108,9 @@ const docController = async (req, res) => {
 
     if (!adminUser) {
       console.log("Admin user not found.");
-      return res.status(404).send({
-        success: false,
-        message: "Admin user not found",
+      return res.status(201).send({
+        success: true,
+        message: "Doctor Registration request sent successfully",
       });
     }
 

@@ -16,6 +16,7 @@ module.exports = async (req, res, next) => {
           .status(200)
           .send({ message: "Token is not valid", success: false });
       } else {
+        req.body = req.body || {};
         req.body.userId = decode.id;
         next();
       }

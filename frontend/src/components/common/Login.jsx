@@ -31,24 +31,25 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:8001/api/user/login", user);
+      const res = await axios.post("http://localhost:4000/api/user/login", user);
       if (res.data.success) {
         localStorage.setItem('token', res.data.token);
         localStorage.setItem('userData', JSON.stringify(res.data.userData));
+        window.dispatchEvent(new Event('auth-changed'));
         message.success('Login successfully');
         const isLoggedIn = JSON.parse(localStorage.getItem("userData"));
         const { type } = isLoggedIn
         
         switch (type) {
           case "admin":
-            navigate("/adminHome")
+            navigate("/adminhome")
             break;
           case "user":
             navigate("/userhome")
             break;
 
           default:
-            navigate("/Login")
+            navigate("/login")
             break;
         }
       }
@@ -106,7 +107,7 @@ const Login = () => {
                 </div>
 
                 <Form onSubmit={handleSubmit}>
-                <label class="form-label" for="formControlLgEmail">Email</label>
+                <label className="form-label" htmlFor="formControlLgEmail">Email</label>
                   <MDBInput
                     style={{ margin: '5px auto' }}
                     name="email"
@@ -117,7 +118,7 @@ const Login = () => {
                     size="md"
                     autoComplete='off'
                   />
-                  <label class="form-label" for="formControlLgPassword">Password</label>
+                  <label className="form-label" htmlFor="formControlLgPassword">Password</label>
                   <MDBInput
                     style={{ margin: '5px auto' }}
                     name="password"

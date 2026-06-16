@@ -26,7 +26,7 @@ const UserAppointments = () => {
   const getUserAppointment = async () => {
     console.log(userid)
     try {
-      const res = await axios.get('http://localhost:8001/api/user/getuserappointments', {
+      const res = await axios.get('http://localhost:4000/api/user/getuserappointments', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -48,7 +48,7 @@ const UserAppointments = () => {
   const getDoctorAppointment = async () => {
     console.log(userid)
     try {
-      const res = await axios.get('http://localhost:8001/api/doctor/getdoctorappointments', {
+      const res = await axios.get('http://localhost:4000/api/doctor/getdoctorappointments', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -68,7 +68,7 @@ const UserAppointments = () => {
 
   const handleStatus = async (userid, appointmentId, status) => {
     try {
-      const res = await axios.post('http://localhost:8001/api/doctor/handlestatus', {
+      const res = await axios.post('http://localhost:4000/api/doctor/handlestatus', {
         userid,
         appointmentId,
         status,
@@ -103,7 +103,11 @@ const UserAppointments = () => {
 
   const handleDownload = async (url, appointId) => {
     try {
-      const res = await axios.get('http://localhost:8001/api/doctor/getdocumentdownload', {
+      if (!url) {
+        message.error('No document available for this appointment');
+        return;
+      }
+      const res = await axios.get('http://localhost:4000/api/doctor/getdocumentdownload', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem("token")}`,
         },
@@ -153,12 +157,20 @@ const UserAppointments = () => {
             <tbody>
               {doctorAppointments.length > 0 ? (
                 doctorAppointments.map((appointment) => {
+                  const documentPath = appointment.document?.path;
+                  const documentName = appointment.document?.filename || 'Document';
                   return (
                     <tr key={appointment._id}>
                       <td>{appointment.userInfo.fullName}</td>
                       <td>{appointment.date}</td>
                       <td>{appointment.userInfo.phone}</td>
-                      <td><Button variant='link' onClick={() => handleDownload(appointment.document.path, appointment._id)}>{appointment.document.filename}</Button></td>
+                      <td>
+                        {documentPath ? (
+                          <Button variant='link' onClick={() => handleDownload(documentPath, appointment._id)}>{documentName}</Button>
+                        ) : (
+                          <span>No document</span>
+                        )}
+                      </td>
                       <td>{appointment.status}</td>
                       <td>{appointment.status === 'approved' ? <></> : <Button onClick={() => handleStatus(appointment.userInfo._id, appointment._id, 'approved')}>Approve</Button>}</td>
                     </tr>

@@ -1,12 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
 import axios from 'axios';
-import { Link } from 'react-router-dom';
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import MedicationIcon from '@mui/icons-material/Medication';
-import LogoutIcon from '@mui/icons-material/Logout';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import { Badge } from 'antd';
 import Notification from '../common/Notification';
 import AdminUsers from './AdminUsers';
 import AdminDoctors from './AdminDoctors';
@@ -18,7 +12,7 @@ const AdminHome = () => {
 
    const getUserData = async () => {
       try {
-         await axios.post('http://localhost:8001/api/user/getuserdata', {}, {
+         await axios.post('http://localhost:4000/api/user/getuserdata', {}, {
             headers: {
                Authorization: "Bearer " + localStorage.getItem('token')
             },
@@ -43,6 +37,7 @@ const AdminHome = () => {
    const logout = () => {
       localStorage.removeItem("token")
       localStorage.removeItem("userData")
+      window.dispatchEvent(new Event('auth-changed'));
       window.location.href = "/"
 
    }
@@ -61,22 +56,22 @@ const AdminHome = () => {
                   </div>
                   <div className="menu">
                      <div className={`menu-items ${activeMenuItem === 'adminusers' ? 'active' : ''}`} onClick={() => handleMenuItemClick('adminusers')}>
-                        <CalendarMonthIcon className='icon' /><Link>Users</Link>
+                        <span className='menu-label'>Users</span>
                      </div>
                      <div className={`menu-items ${activeMenuItem === 'admindoctors' ? 'active' : ''}`} onClick={() => handleMenuItemClick('admindoctors')}>
-                        <MedicationIcon className='icon' /><Link>Doctor</Link>
+                        <span className='menu-label'>Doctor</span>
                      </div>
                      <div className="menu-items">
-                        <LogoutIcon className='icon' /><Link onClick={logout}>Logout</Link>
+                        <span className='menu-label' onClick={logout}>Logout</span>
                      </div>
                   </div>
                </div>
                <div className="content">
                   <div className="header">
                      <div className="header-content" style={{ cursor: 'pointer' }}>
-                        <Badge className={`notify ${activeMenuItem === 'notification' ? 'active' : ''}`} onClick={() => handleMenuItemClick('notification')} count={userdata?.notification ? userdata.notification.length : 0}>
-                           <NotificationsIcon className='icon' />
-                        </Badge>
+                        <button type="button" className={`notify ${activeMenuItem === 'notification' ? 'active' : ''}`} onClick={() => handleMenuItemClick('notification')}>
+                           Notifications{userdata?.notification ? ` (${userdata.notification.length})` : ''}
+                        </button>
 
                         <h3>Hi..{userdata.fullName}</h3>
                      </div>

@@ -16,7 +16,7 @@ const Notification = () => {
 
    const handleAllMarkRead = async () => {
       try {
-         const res = await axios.post('http://localhost:8001/api/user/getallnotification', { userId: user._id }, {
+         const res = await axios.post('http://localhost:4000/api/user/getallnotification', { userId: user._id }, {
             headers: {
                Authorization: `Bearer ${localStorage.getItem('token')}`,
             },
@@ -38,7 +38,7 @@ const Notification = () => {
    }
    const handledeleteAllMark = async () => {
       try {
-         const res = await axios.post('http://localhost:8001/api/user/deleteallnotification', { userId: user._id }, {
+         const res = await axios.post('http://localhost:4000/api/user/deleteallnotification', { userId: user._id }, {
             headers: {
                Authorization: `Bearer ${localStorage.getItem('token')}`,
             },
@@ -60,36 +60,50 @@ const Notification = () => {
       getUser()
    }, []);
 
-
-   return (
-      <div>
-         <h2 className='p-3 text-center'>Notification</h2>
-         <Tabs>
-            <Tabs.TabPane tab="unRead" key={0}>
+   const items = [
+      {
+         key: 'unread',
+         label: 'unRead',
+         children: (
+            <>
                <div className="d-flex justify-content-end">
-                  <h4 style={{ cursor: 'pointer',  }} onClick={handleAllMarkRead} className="p-2">Mark all read</h4>
+                  <h4 style={{ cursor: 'pointer' }} onClick={handleAllMarkRead} className="p-2">Mark all read</h4>
                </div>
-               {user?.notification.map((notificationMsg) => (
-                  <div onClick={notificationMsg.onClickPath} className="card">
+               {user?.notification?.map((notificationMsg, index) => (
+                  <div key={notificationMsg._id || notificationMsg.onClickPath || `unread-${index}`} onClick={notificationMsg.onClickPath} className="card">
                      <div className="card-text">
                         {notificationMsg.message}
                      </div>
                   </div>
                ))}
-            </Tabs.TabPane>
-            <Tabs.TabPane tab="Read" key={1}>
+            </>
+         ),
+      },
+      {
+         key: 'read',
+         label: 'Read',
+         children: (
+            <>
                <div className="d-flex justify-content-end">
                   <h4 style={{ cursor: 'pointer' }} onClick={handledeleteAllMark} className="p-2">delete all read</h4>
                </div>
-               {user?.seennotification.map((notificationMsg) => (
-                  <div style={{ cursor: 'pointer' }} className="card" >
+               {user?.seennotification?.map((notificationMsg, index) => (
+                  <div key={notificationMsg._id || notificationMsg.onClickPath || `read-${index}`} style={{ cursor: 'pointer' }} className="card">
                      <div className="card-text" onClick={() => navigate(notificationMsg.onClickPath)}>
                         {notificationMsg.message}
                      </div>
                   </div>
                ))}
-            </Tabs.TabPane>
-         </Tabs>
+            </>
+         ),
+      },
+   ];
+
+
+   return (
+      <div>
+         <h2 className='p-3 text-center'>Notification</h2>
+         <Tabs items={items} />
       </div>
    )
 }

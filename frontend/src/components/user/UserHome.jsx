@@ -1,14 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { Badge, Row } from 'antd';
 import Notification from '../common/Notification';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import MedicationIcon from '@mui/icons-material/Medication';
-import LogoutIcon from '@mui/icons-material/Logout';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import { Container } from 'react-bootstrap';
-
 import ApplyDoctor from './ApplyDoctor';
 import UserAppointments from './UserAppointments';
 import DoctorList from './DoctorList';
@@ -27,7 +20,7 @@ const UserHome = () => {
 
    const getUserData = async () => {
       try {
-         await axios.post('http://localhost:8001/api/user/getuserdata', {}, {
+         await axios.post('http://localhost:4000/api/user/getuserdata', {}, {
             headers: {
                Authorization: "Bearer " + localStorage.getItem('token')
             },
@@ -39,7 +32,7 @@ const UserHome = () => {
 
    const getDoctorData = async () => {
       try {
-         const res = await axios.get('http://localhost:8001/api/user/getalldoctorsu', {
+         const res = await axios.get('http://localhost:4000/api/user/getalldoctorsu', {
             headers: {
                Authorization: "Bearer " + localStorage.getItem('token')
             },
@@ -61,6 +54,7 @@ const UserHome = () => {
    const logout = () => {
       localStorage.removeItem("token");
       localStorage.removeItem("userData");
+      window.dispatchEvent(new Event('auth-changed'));
       window.location.href = "/";
    };
 
@@ -81,15 +75,15 @@ const UserHome = () => {
                         <CalendarMonthIcon className='icon' /><Link>Home</Link>
                      </div> */}
                      <div className={`menu-items ${activeMenuItem === 'userappointments' ? 'active' : ''}`} onClick={() => handleMenuItemClick('userappointments')}>
-                        <CalendarMonthIcon className='icon' /><Link>Appointments</Link>
+                        <span className='menu-label'>Appointments</span>
                      </div>
                      {userdata.isdoctor === true ? <></> : <div className={`menu-items ${activeMenuItem === 'applyDoctor' ? 'active' : ''}`} onClick={() => handleMenuItemClick('applyDoctor')}>
-                        <MedicationIcon className='icon' /><Link>Apply doctor</Link>
+                        <span className='menu-label'>Apply doctor</span>
                      </div>}
                      
                      
                      <div className="menu-items" onClick={logout}>
-                        <LogoutIcon className='icon' /><Link>Logout</Link>
+                        <span className='menu-label'>Logout</span>
                      </div>
                   </div>
                </div>
@@ -97,9 +91,9 @@ const UserHome = () => {
                   <div className="header">
                      <div className="header-content">
                         
-                        <Badge className={`notify ${activeMenuItem === 'notification' ? 'active' : ''}`} onClick={() => handleMenuItemClick('notification')} count={userdata?.notification ? userdata.notification.length : 0}>
-                           <NotificationsIcon className="icon" />
-                        </Badge>
+                        <button type="button" className={`notify ${activeMenuItem === 'notification' ? 'active' : ''}`} onClick={() => handleMenuItemClick('notification')}>
+                           Notifications{userdata?.notification ? ` (${userdata.notification.length})` : ''}
+                        </button>
 
                         {userdata.isdoctor === true && <h3>Dr. </h3>}
                         <h3>{userdata.fullName}</h3>
@@ -109,18 +103,18 @@ const UserHome = () => {
                      {activeMenuItem === 'applyDoctor' && <ApplyDoctor userId={userdata._id} />}
                      {activeMenuItem === 'notification' && <Notification />}
                      {activeMenuItem === 'userappointments' && <UserAppointments />}
-                     {activeMenuItem !== 'applyDoctor' && activeMenuItem !== 'notification' && activeMenuItem !== 'userappointments' && <Container>
+                     {activeMenuItem !== 'applyDoctor' && activeMenuItem !== 'notification' && activeMenuItem !== 'userappointments' && <div>
                         <h2 className="text-center p-2">Home</h2>
                         
-                        {userdata.isdoctor === true ? <></> : <Row>
+                        {userdata.isdoctor === true ? <></> : <div className="d-flex flex-wrap gap-3 justify-content-center">
                            {doctors && doctors.map((doctor, i) => {
                               let notifyDoc = doctor.userId
                               return (
                                  <DoctorList userDoctorId={notifyDoc} doctor={doctor} userdata={userdata} key={i} />
                               )
                            })}
-                        </Row>}
-                     </Container>}
+                        </div>}
+                     </div>}
                   </div>
                </div>
             </div>

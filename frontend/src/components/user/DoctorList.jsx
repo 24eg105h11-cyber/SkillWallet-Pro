@@ -41,7 +41,7 @@ const DoctorList = ({ userDoctorId, doctor, userdata }) => {
          formData.append('userInfo', JSON.stringify(userdata));
          formData.append('doctorInfo', JSON.stringify(doctor));
 
-         const res = await axios.post('http://localhost:8001/api/user/getappointment', formData, {
+         const res = await axios.post('http://localhost:4000/api/user/getappointment', formData, {
             headers: {
                Authorization: `Bearer ${localStorage.getItem("token")}`,
                'Content-Type': 'multipart/form-data',
@@ -63,24 +63,12 @@ const DoctorList = ({ userDoctorId, doctor, userdata }) => {
          <Card style={{ width: '18rem' }}>
             <Card.Body>
                <Card.Title>Dr. {doctor.fullName}</Card.Title>
-               <Card.Text>
-                  <p>Phone: <b>{doctor.phone}</b></p>
-               </Card.Text>
-               <Card.Text>
-                  <p>Address: <b>{doctor.address}</b></p>
-               </Card.Text>
-               <Card.Text>
-                  <p>Specialization: <b>{doctor.specialization}</b></p>
-               </Card.Text>
-               <Card.Text>
-                  <p>Experience: <b>{doctor.experience} Yrs</b></p>
-               </Card.Text>
-               <Card.Text>
-                  <p>Fees: <b>{doctor.fees}</b></p>
-               </Card.Text>
-               <Card.Text>
-                  <p>Timing: <b>{doctor.timings[0]} : {doctor.timings[1]}</b></p>
-               </Card.Text>
+               <Card.Text as="div">Phone: <b>{doctor.phone}</b></Card.Text>
+               <Card.Text as="div">Address: <b>{doctor.address}</b></Card.Text>
+               <Card.Text as="div">Specialization: <b>{doctor.specialization}</b></Card.Text>
+               <Card.Text as="div">Experience: <b>{doctor.experience} Yrs</b></Card.Text>
+               <Card.Text as="div">Fees: <b>{doctor.fees}</b></Card.Text>
+               <Card.Text as="div">Timing: <b>{doctor.timings[0]} : {doctor.timings[1]}</b></Card.Text>
                <Button variant="primary" onClick={handleShow}>
                   Book Now
                </Button>
